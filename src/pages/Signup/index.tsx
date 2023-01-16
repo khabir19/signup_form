@@ -1,6 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "../../styles/styles.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  validEmail,
+  validCpf,
+  validPis,
+  validPassword,
+} from "../../regex/regex";
 
 const Signup = () => {
   interface UserData {
@@ -18,14 +24,6 @@ const Signup = () => {
     zipcode: string;
   }
 
-  const [user, setUser] = useState("");
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("newUser") || "{}");
-
-    setUser(storedUser);
-  }, [setUser]);
-
   const [fullname, setFullname] = useState("");
   const [email, setEmail] = useState("");
   const [cpf, setCpf] = useState("");
@@ -38,6 +36,10 @@ const Signup = () => {
   const [county, setCounty] = useState("");
   const [country, setCountry] = useState("");
   const [zipcode, setZipcode] = useState("");
+  const [emailErr, setEmailErr] = useState(false);
+  const [cpfErr, setCpfErr] = useState(false);
+  const [pisErr, setPisErr] = useState(false);
+  const [pwdError, setPwdError] = useState(false);
 
   const newUser: UserData = {
     fullname: fullname,
@@ -54,11 +56,34 @@ const Signup = () => {
     zipcode: zipcode,
   };
 
-  const handleSubmit = () => {
-    localStorage.setItem("newUser", JSON.stringify(newUser));
-  };
+  const navigate = useNavigate();
 
-  console.log(user);
+  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+
+    if (!validEmail.test(email)) {
+      setEmailErr(true);
+    }
+    if (!validCpf.test(cpf)) {
+      setCpfErr(true);
+    }
+    if (!validPis.test(pis)) {
+      setPisErr(true);
+    }
+    if (!validPassword.test(password)) {
+      setPwdError(true);
+    }
+    if (
+      validEmail.test(email) &&
+      validCpf.test(cpf) &&
+      validPis.test(pis) &&
+      validPassword.test(password)
+    ) {
+      localStorage.setItem("newUser", JSON.stringify(newUser));
+
+      navigate("/");
+    }
+  };
 
   return (
     <div className="App">
@@ -78,8 +103,8 @@ const Signup = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Email"
-            required
           />
+          {emailErr && <span>Seu Email não é válido</span>}
           <input
             name="cpf"
             type="text"
@@ -87,6 +112,7 @@ const Signup = () => {
             onChange={(e) => setCpf(e.target.value)}
             placeholder="CPF"
           />
+          {cpfErr && <span>Seu CPF não é valido</span>}
           <input
             name="pis"
             type="text"
@@ -94,6 +120,7 @@ const Signup = () => {
             onChange={(e) => setPis(e.target.value)}
             placeholder="PIS"
           />
+          {pisErr && <span>Seu PIS não é valido</span>}
           <input
             name="password"
             type="text"
@@ -101,6 +128,7 @@ const Signup = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Senha"
           />
+          {pwdError && <span>Sua senha não é válida</span>}
           <h2>Endereço</h2>
           <input
             name="street"
@@ -131,7 +159,7 @@ const Signup = () => {
             placeholder="Cidade"
           />
           <input
-            name="state"
+            name="county"
             type="text"
             value={county}
             onChange={(e) => setCounty(e.target.value)}
@@ -151,38 +179,16 @@ const Signup = () => {
             onChange={(e) => setZipcode(e.target.value)}
             placeholder="CEP"
           />
-          {fullname && email && cpf && pis && password ? (
-            <>
-              <Link
-                className="signup-button"
-                type="submit"
-                role="button"
-                onClick={handleSubmit}
-                to="/"
-              >
-                Registrar
-              </Link>
-            </>
-          ) : (
-            <>
-              <div className="tooltip-wrap">
-                <Link
-                  className="disabled-link"
-                  type="submit"
-                  role="button"
-                  onClick={handleSubmit}
-                  to="/"
-                  aria-disabled
-                >
-                  Registrar
-                </Link>
-                <div className="tooltip-content">
-                  Preencha Nome, Email, CPF, PIS e Senha
-                </div>
-              </div>
-            </>
-          )}
-          <Link className="signup-button" type="submit" role="button" to="/">
+          <>
+            <button
+              className="submit-button"
+              type="submit"
+              onClick={(e) => handleSubmit(e)}
+            >
+              Registrar
+            </button>
+          </>
+          <Link className="submit-button" type="submit" role="button" to="/">
             Voltar
           </Link>
         </form>

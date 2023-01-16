@@ -1,13 +1,12 @@
-import React from 'react';
-import { getByPlaceholderText, render, screen, fireEvent, waitFor } from '@testing-library/react';
-import App from "../App"
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import App from "../App";
 
-test('renders initial page', () => {
+test("initial page render", () => {
   render(<App />);
 
-  const inputUser = screen.getByPlaceholderText('email, CPF ou PIS');
+  const inputUser = screen.getByPlaceholderText("email, CPF ou PIS");
 
-  const inputPassword = screen.getByPlaceholderText('senha');
+  const inputPassword = screen.getByPlaceholderText("senha");
 
   const linkElement = screen.getByText(/Olá, visitante!/i);
   expect(linkElement).toBeInTheDocument();
@@ -15,40 +14,80 @@ test('renders initial page', () => {
   expect(inputPassword).toBeInTheDocument();
 });
 
-test('login successful', async () => {
+test("successful login render", async () => {
   render(<App />);
-  
-  const inputUser = screen.getByPlaceholderText('email, CPF ou PIS');
-  fireEvent.change(inputUser, {target: {value: 'harry' || 'harry@uol.com' || '12345678911' || '12345678912'}});
 
-  const inputPassword = screen.getByPlaceholderText('senha');
-  fireEvent.change(inputPassword, {target: {value: 'password'}});
+  const inputUser = screen.getByPlaceholderText("email, CPF ou PIS");
+  fireEvent.change(inputUser, { target: { value: "username" } });
 
-  const buttonSubmit = screen.getByText('Entrar');
+  const inputPassword = screen.getByPlaceholderText("senha");
+  fireEvent.change(inputPassword, { target: { value: "password" } });
+
+  const buttonSubmit = screen.getByText("Entrar");
   fireEvent.click(buttonSubmit);
 
-  const processingButton = screen.getByText('Processando.....');
-  expect(processingButton).toBeInTheDocument();  
+  const processingButton = screen.getByText("Processando.....");
+  expect(processingButton).toBeInTheDocument();
+});
+
+test("failed to login", async () => {
+  render(<App />);
+
+  const buttonSubmit = screen.getByText("Entrar");
+  fireEvent.click(buttonSubmit);
+
+  const processingButton = screen.getByText("Processando.....");
+  expect(processingButton).toBeInTheDocument();
 
   render(<App />);
 
   await waitFor(() => {
-    screen.getAllByText('Logout')
-  })
-})
+    screen.getAllByText("Usuário ou senha incorretos!");
+  });
+});
 
-test('failed to login', async () => {
+test("signup screen", async () => {
   render(<App />);
   
-  const buttonSubmit = screen.getByText('Entrar');
-  fireEvent.click(buttonSubmit);
+  const buttonSignup = screen.getByText("Cadastrar");
+  fireEvent.click(buttonSignup);
+
+  const inputFullname = screen.getByPlaceholderText("Nome completo");
+  fireEvent.change(inputFullname, { target: { value: "fullname" } });
   
-  const processingButton = screen.getByText('Processando.....');
-  expect(processingButton).toBeInTheDocument();  
+  const inputEmail = screen.getByPlaceholderText("Email");
+  fireEvent.change(inputEmail, { target: { value: "email" } });
+  
+  const inputCpf = screen.getByPlaceholderText("CPF");
+  fireEvent.change(inputCpf, { target: { value: "cpf" } });
+  
+  const inputPis = screen.getByPlaceholderText("PIS");
+  fireEvent.change(inputPis, { target: { value: "pis" } });
+  
+  const inputPassword = screen.getByPlaceholderText("Senha");
+  fireEvent.change(inputPassword, { target: { value: "password" } });
+  
+  const inputStreet = screen.getByPlaceholderText("Rua");
+  fireEvent.change(inputStreet, { target: { value: "street" } });
+  
+  const inputNumber = screen.getByPlaceholderText("Número");
+  fireEvent.change(inputNumber, { target: { value: "number" } });
+  
+  const inputComp = screen.getByPlaceholderText("Complemento");
+  fireEvent.change(inputComp, { target: { value: "comp" } });
+  
+  const inputCity = screen.getByPlaceholderText("Cidade");
+  fireEvent.change(inputCity, { target: { value: "city" } });
+  
+  const inputCounty = screen.getByPlaceholderText("Estado");
+  fireEvent.change(inputCounty, { target: { value: "county" } });
+  
+  const inputCountry = screen.getByPlaceholderText("País");
+  fireEvent.change(inputCountry, { target: { value: "country" } });
+    
+  const inputZipcode = screen.getByPlaceholderText("CEP");
+  fireEvent.change(inputZipcode, { target: { value: "zipcode" } });
 
-  render(<App />);
-
-  await waitFor(() => {
-    screen.getAllByText('Usuário ou senha incorretos!')
-  })
-})
+  const buttonSubmit = screen.getByText("Registrar");
+  fireEvent.click(buttonSubmit);  
+});

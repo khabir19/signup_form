@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+/* eslint-disable no-restricted-globals */
+import { useState, useEffect } from "react";
 import "../../styles/styles.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const EditUser = () => {
   interface UserData {
@@ -32,7 +33,6 @@ const EditUser = () => {
     setCounty(storedUser.county);
     setCountry(storedUser.country);
     setZipcode(storedUser.zipcode);
-    console.log(storedUser);
   }, []);
 
   const [fullname, setFullname] = useState("");
@@ -66,10 +66,18 @@ const EditUser = () => {
   const handleSubmit = () => {
     localStorage.setItem("newUser", JSON.stringify(newUser));
   };
+  
+  const navigate = useNavigate();
 
   const handleDelete = () => {
-    localStorage.removeItem("newUser");
+    let text = "Tem certeza que quer deletar seus dados?";
+    if (confirm(text) === true) {
+      localStorage.removeItem("newUser");
+      
+      navigate("/");      
+    } 
   };
+
 
   return (
     <div className="App">
@@ -88,8 +96,7 @@ const EditUser = () => {
             type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            required
+            placeholder="Email"            
           />
           <input
             name="cpf"
@@ -163,27 +170,17 @@ const EditUser = () => {
             placeholder="CEP"
           />
           <>
-            <Link
-              className="signup-button"
-              type="submit"
-              role="button"
-              onClick={handleSubmit}
-              to="/"
-            >
-              Salvar
+            <Link to="/">
+              <button className="submit-button" type="submit" onClick={handleSubmit}>
+                Salvar
+              </button>
             </Link>
           </>
-          <Link
-            className="signup-button"
-            type="submit"
-            role="button"
-            onClick={handleDelete}
-            to="/"
-          >
-            Apagar
-          </Link>
-          <Link className="signup-button" type="submit" role="button" to="/">
-            Voltar
+            <button className="submit-button" type="submit" onClick={handleDelete}>
+              Apagar
+            </button>
+          <Link to="/">
+            <button className="submit-button" type="submit">Voltar</button>
           </Link>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import "../../styles/styles.css";
 import userData from "../../userData/index";
 import { Link } from "react-router-dom";
@@ -12,14 +12,6 @@ const Login = () => {
     error: string;
     isLoggedIn: boolean;
   }
-
-  const [user, setUser] = useState("");
-
-  useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("newUser") || "{}");
-
-    setUser(storedUser);
-  }, [setUser]);
 
   type LoginAction =
     | { type: "login" | "success" | "error" | "logout" | "edit" }
@@ -99,8 +91,6 @@ const Login = () => {
     }
   };
 
-  console.log(user);
-
   return (
     <div className="App">
       <div className="login-container">
@@ -108,10 +98,20 @@ const Login = () => {
           <>
             <p>{`Hello ${username}`}</p>
 
-            <button type="button" onClick={() => dispatch({ type: "edit" })}>
-              <Link to="/edit">Editar</Link>
-            </button>
-            <button type="button" onClick={() => dispatch({ type: "logout" })}>
+            <Link to="/edit">
+              <button
+                className="submit-button"
+                type="button"
+                onClick={() => dispatch({ type: "edit" })}
+              >
+                Editar
+              </button>
+            </Link>
+            <button
+              className="submit-button"
+              type="button"
+              onClick={() => dispatch({ type: "logout" })}
+            >
               Sair
             </button>
           </>
@@ -144,12 +144,16 @@ const Login = () => {
                 })
               }
             />
-            <button type="submit" className="submit" disabled={isLoading}>
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={isLoading}
+            >
               {isLoading ? "Processando....." : "Entrar"}
             </button>
             <p>Ainda não tem cadastro?</p>
             <Link to="/signup">
-              <button className="signup">Cadastrar</button>
+              <button className="submit-button">Cadastrar</button>
             </Link>
           </form>
         )}
